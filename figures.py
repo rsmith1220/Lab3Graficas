@@ -116,6 +116,21 @@ class Disk(object):
                          texcoords = None,
                          sceneObj = self)
 
+class Cylinder(object):
+    def Ray_inter_finite_cylinder(P,d):
+    # If intersection, is it between “end caps”?
+        if y > 1 or y < -1 for t1 or t2, toss it
+        # Check for intersection with top end cap
+        Compute ray_inter_plane(t3, plane y = 1)
+        Compute P + t3*d
+        # If it intersects, is it within cap circle?
+        if x^2 + z^2 > 1, toss out t3
+        # Check intersection with other end cap
+        Compute ray_inter_plane(t4, plane y = -1)
+        Compute P + t4*d
+        # If it intersects, is it within cap circle?
+        if x^2 + z^2 > 1, toss out t4
+
 
 
 
