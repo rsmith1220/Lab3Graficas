@@ -1,4 +1,5 @@
 import numpy as np
+import matesRS
 
 WHITE = (1,1,1)
 BLACK = (0,0,0)
@@ -116,20 +117,31 @@ class Disk(object):
                          texcoords = None,
                          sceneObj = self)
 
-class Cylinder(object):
-    def Ray_inter_finite_cylinder(P,d):
-    # If intersection, is it between “end caps”?
-        if y > 1 or y < -1 for t1 or t2, toss it
-        # Check for intersection with top end cap
-        Compute ray_inter_plane(t3, plane y = 1)
-        Compute P + t3*d
-        # If it intersects, is it within cap circle?
-        if x^2 + z^2 > 1, toss out t3
-        # Check intersection with other end cap
-        Compute ray_inter_plane(t4, plane y = -1)
-        Compute P + t4*d
-        # If it intersects, is it within cap circle?
-        if x^2 + z^2 > 1, toss out t4
+class Oval(object):
+    def magnitude(vector):
+       return np.sqrt(np.dot(np.array(vector),np.array(vector)))
+
+    def norm(vector):
+        return np.array(vector)/magnitude(np.array(vector))
+
+    def lineRayIntersectionPoint(rayOrigin, rayDirection, point1, point2):
+    
+        # Convert to numpy arrays
+        rayOrigin = np.array(rayOrigin, dtype=np.float)
+        rayDirection = np.array(norm(rayDirection), dtype=np.float)
+        point1 = np.array(point1, dtype=np.float)
+        point2 = np.array(point2, dtype=np.float)
+        
+        
+        v1 = rayOrigin - point1
+        v2 = point2 - point1
+        v3 = np.array([-rayDirection[1], rayDirection[0]])
+        t1 = np.cross(v2, v1) / np.dot(v2, v3)
+        t2 = np.dot(v1, v3) / np.dot(v2, v3)
+        if t1 >= 0.0 and t2 >= 0.0 and t2 <= 1.0:
+            return [rayOrigin + t1 * rayDirection]
+        return []
+
 
 
 
@@ -220,3 +232,51 @@ class AABB(object):
                          normal = intersect.normal,
                          texcoords = (u,v),
                          sceneObj = self)
+
+# tratando de hacer un tiángulo
+class Triangle(object):
+ 
+
+    def __init__(self, p1, p2, p3, material=None):
+        '''
+        @param p1: erster Eckpunkt
+        @param p2: zweiter Eckpunkt
+        @param p3: dritter Eckpunkt
+        @param material: Material, default: Material()
+        '''
+        self.p1 = p1
+        self.p2 = p2
+        self.p3 = p3
+        self.u = matesRS.subTuple(p2, p1)
+        self.v = matesRS.subTuple(p3, p1)
+        self.normal = np.linalg.norm(np.cross(self.u,self.v))
+
+        self.material = material 
+
+        
+
+    def __repr__(self):
+        return "Triangle(%s, %s, %s)" % (repr(self.p1), repr(self.p2), repr(self.p3))
+
+    def intersectionParameter(self, ray):
+        
+        dv = ray.direction.cross(self.v)
+        dvu = dv.dot(self.u)
+        if dvu == 0.0:
+            return None
+            
+        w = ray.origin - self.p1
+        wu = w.cross(self.u)
+        r = dv.dot(w) / dvu
+        if r < 0 or r > 1:
+            return None
+          
+        s = wu.dot(ray.direction) / dvu
+        if s >= 0 and s <= 1 and r + s <= 1:
+            return wu.dot(self.v) / dvu
+        else:
+            return None
+
+    def normalAt(self, p):
+        
+        return self.normal

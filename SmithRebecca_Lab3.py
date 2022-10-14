@@ -29,7 +29,8 @@ rtx.lights.append( AmbientLight(intensity = 0.1 ))
 
 
 
-rtx.scene.append(Cylinder((0,0,0), radius=15, normal=(1,1,1), material=stone))
+rtx.scene.append( Triangle(p1=(2.5,3,-10), p2=(-2.5,3,-10), p3=(0,7,-10)))
+
 
 
 rtx.glRender()
