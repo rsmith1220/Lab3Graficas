@@ -110,3 +110,6 @@ def listas(l1,l2):
     for i1, i2 in zip(l1, l2):
         Result.append(i1*i2)
     return Result
+
+def subTuple(a,b):
+    tuple(map(lambda i, j: i - j, a, b))

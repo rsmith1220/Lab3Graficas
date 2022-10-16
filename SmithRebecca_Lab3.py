@@ -22,14 +22,14 @@ pinkglass = Material(diffuse = (1.55, 0.92, 1.03), spec = 64, ior=1.5, matType =
 
 rtx = Raytracer(width, height)
 
-rtx.envMap = Texture("parkingLot.bmp")
+# rtx.envMap = Texture("parkingLot.bmp")
 
 rtx.lights.append( AmbientLight(intensity = 0.1 ))
 # rtx.lights.append(PointLight((0,5,10), constant = 1.0, linear = 0.1, quad = 0.05, color = (1,1,1)))
 
 
 
-rtx.scene.append( Triangle(p1=(2.5,3,-10), p2=(-2.5,3,-10), p3=(0,7,-10)))
+rtx.scene.append( Triangle(p1=(2.5,3,-10), p2=(-2.5,3,-10), p3=(0,7,-10),position=(1,1,-10),material=stone))
 
 
 

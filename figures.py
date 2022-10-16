@@ -66,7 +66,6 @@ class Sphere(object):
                          texcoords = uvs,
                          sceneObj = self)
 
-
 class Plane(object):
     def __init__(self, position, normal,  material):
         self.position = position
@@ -116,35 +115,6 @@ class Disk(object):
                          normal = self.plane.normal,
                          texcoords = None,
                          sceneObj = self)
-
-class Oval(object):
-    def magnitude(vector):
-       return np.sqrt(np.dot(np.array(vector),np.array(vector)))
-
-    def norm(vector):
-        return np.array(vector)/magnitude(np.array(vector))
-
-    def lineRayIntersectionPoint(rayOrigin, rayDirection, point1, point2):
-    
-        # Convert to numpy arrays
-        rayOrigin = np.array(rayOrigin, dtype=np.float)
-        rayDirection = np.array(norm(rayDirection), dtype=np.float)
-        point1 = np.array(point1, dtype=np.float)
-        point2 = np.array(point2, dtype=np.float)
-        
-        
-        v1 = rayOrigin - point1
-        v2 = point2 - point1
-        v3 = np.array([-rayDirection[1], rayDirection[0]])
-        t1 = np.cross(v2, v1) / np.dot(v2, v3)
-        t2 = np.dot(v1, v3) / np.dot(v2, v3)
-        if t1 >= 0.0 and t2 >= 0.0 and t2 <= 1.0:
-            return [rayOrigin + t1 * rayDirection]
-        return []
-
-
-
-
 
 class AABB(object):
     # Axis Aligned Bounding Box
@@ -237,23 +207,21 @@ class AABB(object):
 class Triangle(object):
  
 
-    def __init__(self, p1, p2, p3, material=None):
-        '''
-        @param p1: erster Eckpunkt
-        @param p2: zweiter Eckpunkt
-        @param p3: dritter Eckpunkt
-        @param material: Material, default: Material()
-        '''
+    def __init__(self, p1, p2, p3, position,material):
+        
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
-        self.u = matesRS.subTuple(p2, p1)
-        self.v = matesRS.subTuple(p3, p1)
-        self.normal = np.linalg.norm(np.cross(self.u,self.v))
-
+        self.position = position
         self.material = material 
+        self.u = tuple(map(lambda i, j: i - j, p2, p1))
+        self.v = tuple(map(lambda i, j: i - j, p3, p1))
+        self.normal = matesRS.normal(np.cross(self.u,self.v))
+        
 
         
+
+    
 
     def __repr__(self):
         return "Triangle(%s, %s, %s)" % (repr(self.p1), repr(self.p2), repr(self.p3))
@@ -280,3 +248,20 @@ class Triangle(object):
     def normalAt(self, p):
         
         return self.normal
+
+    def ray_intersect(self, orig, dir):
+        denom = np.dot( dir, self.normal)
+
+        if abs(denom) > 0.0001:
+            num = np.dot( np.subtract(self.position, orig), self.normal)
+            t = num / denom
+
+            if t > 0:
+                # P = O + t*D
+                P = np.add(orig, t * np.array(dir))
+                return Intersect(distance = t,
+                                 point = P,
+                                 normal = self.normal,
+                                 texcoords = None,
+                                 sceneObj = self)
+                
